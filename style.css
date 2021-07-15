@@ -1,0 +1,9 @@
+#display-container {
+    display: block;
+    width: 150px;
+    height: 50px;
+}
+
+#display {
+    font-size: large;
+}
