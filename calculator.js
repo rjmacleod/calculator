@@ -52,7 +52,7 @@ operatorButtons.forEach(button => {
             else { //  we have n1 and displayValue has 2nd number
                 n2 = displayValue; // n2 is what is displayed
                 displayValue = operate(operator, n1, n2); // display result
-                // console.log("displayValue: " + displayValue);
+                trimResultLength();
                 display.textContent = displayValue;
                 n1 = displayValue; // set n1 equal to result
                 n2 = "";
@@ -97,6 +97,7 @@ decimalButton.onclick = () => {
 }
 
 // Display Functions
+// =================
 function populateDisplayWithDigit(digit) {
     if(displayValue == "0") {
         displayValue = "";
@@ -105,19 +106,46 @@ function populateDisplayWithDigit(digit) {
     display.textContent = displayValue;
 }
 
-// Calculator Logic Functions
-function resolveEqualsButton() {
-    displayValue = operate(operator, n1, n2); // display result
+// Takes a number and makes it less than 9 char in length
+// or displays NaN if too large
+function trimResultLength() {
     if(Number.isInteger(displayValue)) {
-        if(displayValue.length > 9) {
+        if(String(displayValue).length > 9) {
+            console.error("Integer too large to display");
             displayValue = "NaN";
             needsClear = true;
             return;
         }
     }
-    else if(displayValue.length > 9) {
+    else if (String(displayValue).length > 9) {
         displayValue = roundDecimalValue(displayValue);
     }
+}
+
+// Takes a number with a decimal value and trims so the whole
+// number is less than 9 char in length
+function roundDecimalValue(n) {
+    let integerDigits = 0;
+    let x = Math.floor(n);
+    while(x > 0) {
+        console.log("x = " + x);
+        x = Math.floor(x/10);
+        integerDigits++;
+    }
+    if(n < 1) {
+        integerDigits = 1;
+    }
+    let decimalDigits = 8 - integerDigits;
+    let roundingFactor = Math.pow(10, decimalDigits);
+    let output = Math.round(n * roundingFactor) / roundingFactor;
+    return output;
+}
+
+// Calculator Logic Functions
+// ==========================
+function resolveEqualsButton() {
+    displayValue = operate(operator, n1, n2); // display result
+    trimResultLength();
     display.textContent = displayValue;
     n1 = displayValue; // set n1 equal to result
     prev2 = n2; // save n2 in case 
@@ -129,21 +157,10 @@ function resolveEqualsButton() {
     lastInputEquals = true;
 }
 
-function roundDecimalValue(n) {
-    let integerDigits = 0;
-    let x = Number.floor(n);
-    while(x > 0) {
-        x /= 10;
-        integerDigits++;
-    }
-    if(n < 1) {
-        integerDigits = 1;
-    }
-    let decimalDigits = 8 - integerDigits;
-    return Number(Math.round(n+'e'+decimalDigits)+'e-'+decimalDigits);
-}
-
 function add(a, b) {
+    console.log("a= " + a + ", b= " + b);
+    output = Number(a) + Number(b);
+    console.log(output);
     return Number(a) + Number(b);
 }
 
