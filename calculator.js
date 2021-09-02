@@ -7,9 +7,12 @@ const operatorButtons = document.querySelectorAll('.operator');
 const clearButton = document.querySelector('#clear');
 const equalsButton = document.querySelector('#equals');
 const decimalButton = document.querySelector('#decimal');
+const negativeButton = document.querySelector("#negative");
+const deleteButton = document.querySelector('#delete');
 
 // Display
 let displayValue = "0";
+let displayValueIsNegative = false;
 
 // Calculator Memory
 let n1 = "";
@@ -21,18 +24,25 @@ let operator = "";
 let needsClear = false;
 let hasDecimal = false;
 let lastInputEquals = false;
+let displayIsFull = false;
 
 // Button Events
 digitButtons.forEach(button => {
-    const digit = Number(button.getAttribute('id'));  
-    button.onclick = () => {
-        if(!needsClear) {
-            if(needInput) {
-                displayValue = "";
-                hasDecimal = false;
+    if(!displayIsFull) {
+        const digit = Number(button.getAttribute('id'));  
+        button.onclick = () => {
+            if(!needsClear) {
+                if(needInput) {
+                    displayValue = "";
+                    hasDecimal = false;
+                    displayValueIsNegative = false;
+                }
+                populateDisplayWithDigit(digit);
+                needInput = false;
             }
-            populateDisplayWithDigit(digit);
-            needInput = false;
+        }
+        if(String(displayValue).length == 9) {
+            displayIsFull = true;
         }
     }
 })
@@ -59,6 +69,9 @@ operatorButtons.forEach(button => {
                 operator = operation; // button just pressed is new operator
                 needInput = true;
                 hasDecimal = false;
+                if(displayValue < 0) {
+                    displayValueIsNegative = true;
+                }
             }
         }
     }
@@ -89,10 +102,39 @@ equalsButton.onclick = () => {
 }
 
 decimalButton.onclick = () => {
-    if(!needsClear && !hasDecimal) {
+    if(!needsClear && !hasDecimal && !displayIsFull) {
         displayValue += ".";
         display.textContent = displayValue;
         hasDecimal = true;
+    }
+}
+
+negativeButton.onclick = () => {
+    if(!displayIsFull && !displayValueIsNegative && displayValue != '0') {
+        displayValue = "-" + displayValue;
+        display.textContent = displayValue;
+        displayValueIsNegative = true;
+        if(needInput) {
+            n1 *= -1;
+        }
+    }
+    else if(displayValueIsNegative) {
+        displayValue = String(displayValue).substring(1, String(displayValue).length);
+        display.textContent = displayValue;
+        displayValueIsNegative = false;
+        if(needInput) {
+            n1 *= -1;
+        }
+    }
+}
+
+deleteButton.onclick  = () => {
+    if(!needInput && displayValue != '0') {
+        displayValue = String(displayValue).substring(0, String(displayValue).length - 1);
+        if(displayValue == "" || displayValue == "-") {
+            displayValue = '0';
+        }
+        display.textContent = displayValue;
     }
 }
 
@@ -128,7 +170,6 @@ function roundDecimalValue(n) {
     let integerDigits = 0;
     let x = Math.floor(n);
     while(x > 0) {
-        console.log("x = " + x);
         x = Math.floor(x/10);
         integerDigits++;
     }
@@ -155,12 +196,13 @@ function resolveEqualsButton() {
     needInput = true;
     hasDecimal = false;
     lastInputEquals = true;
+    if(displayValue < 0) {
+        displayValueIsNegative = true;
+    }
 }
 
 function add(a, b) {
-    console.log("a= " + a + ", b= " + b);
     output = Number(a) + Number(b);
-    console.log(output);
     return Number(a) + Number(b);
 }
 
@@ -183,7 +225,6 @@ function divide(a, b) {
 }
 
 function operate(operator, a, b) {
-    // console.log("operator: " + operator + ", n1: " + n1 + ", n2: " + n2);
     switch(operator) {
         case("plus"):
             return add(a, b);
