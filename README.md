@@ -1,3 +1,5 @@
+Project Status: Incomplete, not working
+
 What this is:
 =============
 A basic browser calculator created using HTML, CSS and JavaScript.
