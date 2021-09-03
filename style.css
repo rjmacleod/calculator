@@ -1,9 +1,53 @@
-#display-container {
-    display: block;
-    width: 150px;
-    height: 50px;
+:root {
+    --color-base: lightyellow;
+}
+
+main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    background: grey;
+    width: 200px;
+    height: 350px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+    gap: 3px;
+    border: 10px darkorange solid;
+    border-radius: 10px;
 }
 
 #display {
-    font-size: large;
+    background: lightcyan;
+    padding: 10px 20px;
+    justify-content: space-around;
+    font-family: monospace;
+    font-size: 2.4em;
+    border: 2px black solid;
+    border-radius: 5px;
+}
+
+#display-container {
+    grid-column: 1 / 5;
+    grid-row: 1;
+}
+
+.calc-button {
+    font-family: monospace;
+    font-weight: 200;
+    font-size: 16px;
+    background: lightcyan;
+    border: 2px darkslategray solid;
+    border-radius: 2px;
+}
+
+#clear, #delete {
+    font-size: 10px;
+}
+
+#equals {
+    grid-column: 3 / 5;
 }

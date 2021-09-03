@@ -28,21 +28,19 @@ let displayIsFull = false;
 
 // Button Events
 digitButtons.forEach(button => {
-    if(!displayIsFull) {
-        const digit = Number(button.getAttribute('id'));  
-        button.onclick = () => {
-            if(!needsClear) {
-                if(needInput) {
-                    displayValue = "";
-                    hasDecimal = false;
-                    displayValueIsNegative = false;
-                }
-                populateDisplayWithDigit(digit);
-                needInput = false;
-            }
-        }
-        if(String(displayValue).length == 9) {
+    const digit = Number(button.getAttribute('id'));  
+    button.onclick = () => {
+        if(!needInput && String(displayValue).length == 9) {
             displayIsFull = true;
+        }
+        if(!needsClear && !displayIsFull) {
+            if(needInput) {
+                displayValue = "";
+                hasDecimal = false;
+                displayValueIsNegative = false;
+            }
+            populateDisplayWithDigit(digit);
+            needInput = false;
         }
     }
 })
@@ -55,6 +53,8 @@ operatorButtons.forEach(button => {
                 n1 = displayValue;
                 operator = operation;
                 needInput = true;
+                displayIsFull = false;
+                makeButtonHighlighted(operation);
             }
             else if(needInput) { // we have n1 but waiting for n2 to be input
                 operator = operation;
@@ -62,6 +62,8 @@ operatorButtons.forEach(button => {
             else { //  we have n1 and displayValue has 2nd number
                 n2 = displayValue; // n2 is what is displayed
                 displayValue = operate(operator, n1, n2); // display result
+                removeButtonHighlight(operator);
+                makeButtonHighlighted(operation);
                 trimResultLength();
                 display.textContent = displayValue;
                 n1 = displayValue; // set n1 equal to result
@@ -72,6 +74,7 @@ operatorButtons.forEach(button => {
                 if(displayValue < 0) {
                     displayValueIsNegative = true;
                 }
+                displayIsFull = false;
             }
         }
     }
@@ -87,6 +90,8 @@ clearButton.onclick = () => {
     display.textContent = displayValue;
     needsClear = false;
     hasDecimal = false;
+    displayIsFull = false;
+    removeButtonHighlight(operator);
 }
 
 equalsButton.onclick = () => {
@@ -107,6 +112,9 @@ decimalButton.onclick = () => {
         display.textContent = displayValue;
         hasDecimal = true;
     }
+    if(String(displayValue).length == 9) {
+        displayIsFull = true;
+    }
 }
 
 negativeButton.onclick = () => {
@@ -116,6 +124,9 @@ negativeButton.onclick = () => {
         displayValueIsNegative = true;
         if(needInput) {
             n1 *= -1;
+        }
+        if(String(displayValue).length == 9) {
+            displayIsFull = true;
         }
     }
     else if(displayValueIsNegative) {
@@ -135,6 +146,7 @@ deleteButton.onclick  = () => {
             displayValue = '0';
         }
         display.textContent = displayValue;
+        displayIsFull = false;
     }
 }
 
@@ -154,7 +166,7 @@ function trimResultLength() {
     if(Number.isInteger(displayValue)) {
         if(String(displayValue).length > 9) {
             console.error("Integer too large to display");
-            displayValue = "NaN";
+            displayValue = "Overflow";
             needsClear = true;
             return;
         }
@@ -182,9 +194,22 @@ function roundDecimalValue(n) {
     return output;
 }
 
+function makeButtonHighlighted(operation) {
+    var idString = '#' + operation;
+    var button = document.querySelector(idString);
+    button.setAttribute("style", "background: var(--color-base);")
+}
+
+function removeButtonHighlight(operation) {
+    var idString = '#' + operation;
+    var button = document.querySelector(idString);
+    button.setAttribute("style", "background: lightcyan;")
+}
+
 // Calculator Logic Functions
 // ==========================
 function resolveEqualsButton() {
+    removeButtonHighlight(operator);
     displayValue = operate(operator, n1, n2); // display result
     trimResultLength();
     display.textContent = displayValue;
@@ -199,6 +224,7 @@ function resolveEqualsButton() {
     if(displayValue < 0) {
         displayValueIsNegative = true;
     }
+    displayIsFull = false;
 }
 
 function add(a, b) {
