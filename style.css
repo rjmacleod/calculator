@@ -21,6 +21,7 @@ main {
 }
 
 #display {
+    text-align: right;
     background: lightcyan;
     padding: 10px 20px;
     justify-content: space-around;
@@ -50,4 +51,28 @@ main {
 
 #equals {
     grid-column: 3 / 5;
+}
+
+.footer-div {
+    position: relative;
+    min-height: 100%;
+    margin-bottom: -200px;
+}
+
+footer {
+    position: relative;
+    height: 130px;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    font-family: monospace;
+    font-size: 20px;
+    gap: 10px;
+}
+
+.github-icon {
+    size: 10%;
 }

@@ -14,6 +14,12 @@ const deleteButton = document.querySelector('#delete');
 let displayValue = "0";
 let displayValueIsNegative = false;
 
+// Keyboard event listener
+window.addEventListener('keydown', function(e){
+    const key = document.querySelector(`button[data-key='${e.key}']`);
+    key.click();
+});
+
 // Calculator Memory
 let n1 = "";
 let n2 = "";
