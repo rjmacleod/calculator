@@ -21,6 +21,7 @@ main {
 }
 
 #display {
+    resize: none;
     text-align: right;
     background: lightcyan;
     padding: 10px 20px;
