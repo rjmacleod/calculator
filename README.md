@@ -12,4 +12,4 @@ All code by Roderick MacLeod.
 
 How it works:
 =============
-Click the buttons.
+Use the keyboard or click the buttons.
